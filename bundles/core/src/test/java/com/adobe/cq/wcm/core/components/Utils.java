@@ -28,6 +28,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonStructure;
+import javax.json.JsonArray;
 
 import com.adobe.cq.wcm.core.components.models.datalayer.ComponentData;
 import org.apache.commons.io.FilenameUtils;
@@ -75,8 +76,25 @@ public class Utils {
         JsonReader outputReader = Json.createReader(IOUtils.toInputStream(writer.toString(), StandardCharsets.UTF_8));
         InputStream is = Utils.class.getResourceAsStream(expectedJsonResource);
         if (is != null) {
+
             JsonReader expectedReader = Json.createReader(is);
-            assertEquals(expectedReader.read(), outputReader.read());
+            JsonObject expectedMap = expectedReader.readObject();
+            JsonObject outputMap = outputReader.readObject();
+
+            for (Object key: outputMap.keySet()) {
+                if (outputMap.get(key) instanceof JsonArray) {
+                    JsonArray expectedArray = (JsonArray) expectedMap.get(key);
+                    JsonArray outputArray = (JsonArray) outputMap.get(key);
+                    assertEquals(expectedArray.size(), outputArray.size());
+                    for (Object o : expectedArray) {
+                        assertEquals(outputArray.contains(o), true);
+                    }
+                }
+                else {
+                    assertEquals(expectedMap.get(key), outputMap.get(key));
+                }
+            }
+            
         } else {
             fail("Unable to find test file " + expectedJsonResource + ".");
         }

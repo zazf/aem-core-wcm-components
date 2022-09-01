@@ -18,7 +18,7 @@ package com.adobe.cq.wcm.core.components.internal.models.v1.contentfragment;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class MockElement {
+public class MockElement implements Comparable<MockElement> {
 
     public String name;
     public String title;
@@ -57,5 +57,10 @@ public class MockElement {
     public void addVariation(String name, String title, String contentType, String value, boolean isMultiline,
                              String htmlValue) {
         variations.put(name, new MockVariation(name, title, contentType, value, isMultiline, htmlValue));
+    }
+    
+    @Override
+    public int compareTo(MockElement p) {
+        return this.name.compareTo(p.name);
     }
 }

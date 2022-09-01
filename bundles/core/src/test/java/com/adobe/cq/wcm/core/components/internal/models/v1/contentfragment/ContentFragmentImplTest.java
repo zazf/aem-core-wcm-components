@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Collections;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
@@ -305,9 +308,24 @@ class ContentFragmentImplTest extends AbstractContentFragmentTest<ContentFragmen
         assertNotNull(elementsMap);
         List<DAMContentFragment.DAMContentElement> elements = new ArrayList<>(elementsMap.values());
         assertEquals(expectedElements.length, elements.size(), "Content fragment has wrong number of elements");
+
+        MockElement[] temp = new MockElement[expectedElements.length];
         for (int i = 0; i < expectedElements.length; i++) {
-            DAMContentFragment.DAMContentElement element = elements.get(i);
-            MockElement expected = expectedElements[i];
+            temp[i] = expectedElements[i];
+        }
+        List<MockElement> new_list = Arrays.asList(temp);
+        Collections.sort(new_list);
+
+        List<DAMContentFragment.DAMContentElement> new_elements = new ArrayList<DAMContentFragment.DAMContentElement>();
+        for (int i = 0; i < elements.size(); i++) {
+            new_elements.add(elements.get(i));
+        }
+        new_elements.sort(Comparator.comparing(DAMContentFragment.DAMContentElement::getName));
+        
+        
+        for (int i = 0; i < expectedElements.length; i++) {
+            DAMContentFragment.DAMContentElement element = new_elements.get(i);
+            MockElement expected = new_list.get(i);
             assertEquals(expected.name, element.getName(), "Element has wrong name");
             assertEquals(expected.title, element.getTitle(), "Element has wrong title");
             String contentType = expected.contentType;
