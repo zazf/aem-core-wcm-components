@@ -85,6 +85,7 @@ public class Utils {
                 if (outputMap.get(key) instanceof JsonArray) {
                     JsonArray expectedArray = (JsonArray) expectedMap.get(key);
                     JsonArray outputArray = (JsonArray) outputMap.get(key);
+                    assertEquals(expectedArray.size(), outputArray.size());
                     for (Object o : expectedArray) {
                         assertEquals(outputArray.contains(o), true);
                     }
